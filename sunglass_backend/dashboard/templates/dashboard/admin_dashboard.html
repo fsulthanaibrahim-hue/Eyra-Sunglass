@@ -1,0 +1,9 @@
+<h1>Admin Dashboard</h1>
+
+{% for product in products %}
+  <div>
+    <h3>{{ product.name }}</h3>
+    <p>Stock: {{ product.stock }}</p>
+    <p>Price: ₹{{ product.price }}</p>
+  </div>
+{% endfor %}

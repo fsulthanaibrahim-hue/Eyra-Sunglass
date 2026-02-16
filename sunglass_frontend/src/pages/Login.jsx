@@ -1,54 +1,127 @@
-import { useState, useContext } from 'react';
-import API from '../api/axios';
-import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useState, useContext } from "react";
+import API from "../api/axios";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!username || !password) return alert("All fields are required");
+    setError("");
+
+    if (!username || !password) {
+      setError("All fields are required");
+      return;
+    }
 
     try {
-      const res = await API.post('login/', { username, password });
-      console.log("Login response:", res.data);
+      setLoading(true);
 
-      if (!res.data.access) return alert("Login failed: no token returned");
+      const res = await API.post("users/login/", {
+        username,
+        password,
+      });
 
-      login(res.data.access);
-      navigate('/');
+      const accessToken = res.data.access;
+
+      if (!accessToken) {
+        setError("Login failed");
+        return;
+      }
+
+      login(accessToken);
+
+      navigate("/");
     } catch (err) {
-      console.log("Login error:", err.response?.data);
-      const msg = err.response?.data ? JSON.stringify(err.response.data) : "Unknown error";
-      alert("Login failed: " + msg);
+      setError("Invalid username or password");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          className="border p-2 rounded"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">
-          Login
-        </button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+
+        <h2 className="text-3xl font-bold text-center mb-6">
+          Welcome Back
+        </h2>
+
+        {error && (
+          <div className="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Username
+            </label>
+            <input
+              type="text"
+              className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Enter username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
+          {/* Password with Real Icon */}
+          <div className="relative">
+            <label className="block text-sm font-medium mb-1">
+              Password
+            </label>
+
+            <input
+              type={showPassword ? "text" : "password"}
+              className="w-full border p-3 rounded-lg pr-12 focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-10 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
+            </button>
+          </div>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg text-white font-semibold transition ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+
+        </form>
+
+      </div>
     </div>
   );
 }
