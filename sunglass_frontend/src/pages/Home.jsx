@@ -1,6 +1,6 @@
 import Navbar from "../components/Navbar";
 import { Award, Truck, Headphones } from "lucide-react";
-import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa"
+import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 
 export default function Home() {
   return (
@@ -10,35 +10,35 @@ export default function Home() {
       {/* Hero Section */}
       <section className="bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 py-24 md:py-32 flex flex-col md:flex-row items-center gap-8">
-          {/* Text Left */}
           <div className="md:w-1/2 text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Discover Your <br /> Signature Scent
+              Discover Your <br /> Signature Style
             </h1>
             <p className="text-gray-700 text-lg md:text-xl mb-8">
-              Experience the art of fine fragrance. Each bottle is meticulously crafted using rare ingredients and traditional techniques perfected over generations.
+              Elevate your look with premium sunglasses crafted for comfort,
+              clarity, and advanced UV protection. Designed for Men, Women,
+              and Kids who love to stand out.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <a
                 href="/products"
                 className="bg-gray-800 text-white font-bold px-6 py-3 rounded-md shadow-lg hover:bg-gray-700 transition"
               >
-                Shop Collection
+                Shop Sunglasses
               </a>
               <a
-                href="/consultation"
+                href="/collections"
                 className="text-gray-800 font-semibold px-6 py-3 rounded-md hover:text-yellow-500 transition"
               >
-                Book Consultation
+                Explore Collections
               </a>
             </div>
           </div>
 
-          {/* Image Right */}
           <div className="md:w-1/2">
             <img
               src="/images/home2.jpg"
-              alt="sunglass"
+              alt="Premium Sunglasses"
               className="w-full h-[450px] md:h-[500px] object-cover rounded-xl shadow-lg"
             />
           </div>
@@ -47,20 +47,25 @@ export default function Home() {
 
       {/* Featured Collections */}
       <section className="max-w-7xl mx-auto py-16 px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Explore Our Collections</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          Explore Our Sunglasses Collections
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { img: "/images/home1.jpg", text: "Women's Collection" },
-            { img: "/images/home7.jpg", text: "Kids Collection" },
-            { img: "/images/home3.jpg", text: "Men's Collection" },
+            { img: "/images/home1.jpg", text: "Women's Sunglasses" },
+            { img: "/images/home7.jpg", text: "Kids Sunglasses" },
+            { img: "/images/home3.jpg", text: "Men's Sunglasses" },
           ].map((item, idx) => (
-            <div key={idx} className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-lg transition">
+            <div
+              key={idx}
+              className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-lg transition"
+            >
               <img
                 src={item.img}
                 alt={item.text}
                 className="w-full h-64 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              <div className="absolute bottom-4 left-4 text-gray-50 font-bold text-lg bg-gray-800 bg-opacity-40 px-2 py-1 rounded">
+              <div className="absolute bottom-4 left-4 text-white font-bold text-lg bg-black bg-opacity-40 px-3 py-1 rounded">
                 {item.text}
               </div>
             </div>
@@ -70,7 +75,9 @@ export default function Home() {
 
       {/* Best Sellers */}
       <section className="max-w-7xl mx-auto py-16 px-4 bg-gray-50">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Best Sellers</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          Best Selling Sunglasses
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {[
             { img: "/images/home5.jpg", name: "GlamEdge", price: 2999 },
@@ -78,14 +85,19 @@ export default function Home() {
             { img: "/images/home10.jpg", name: "RayBolt", price: 2599 },
             { img: "/images/home9.jpg", name: "FelineLux", price: 2299 },
           ].map((item, idx) => (
-            <div key={idx} className="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
+            <div
+              key={idx}
+              className="bg-white rounded-lg shadow hover:shadow-lg transition p-4"
+            >
               <img
                 src={item.img}
                 alt={item.name}
                 className="w-full h-48 object-cover rounded-md mb-4"
               />
               <h3 className="font-semibold text-lg mb-1">{item.name}</h3>
-              <p className="text-gray-800 font-bold text-lg">₹ {item.price}</p>
+              <p className="text-gray-800 font-bold text-lg">
+                ₹ {item.price}
+              </p>
             </div>
           ))}
         </div>
@@ -105,24 +117,24 @@ export default function Home() {
       {/* About EYRA */}
       <section className="max-w-7xl mx-auto py-16 px-4 flex flex-col md:flex-row items-center gap-8">
         <div className="md:w-1/2">
-          <img 
-            src="/images/home5.jpg" 
-            alt="About EYRA" 
+          <img
+            src="/images/home5.jpg"
+            alt="About EYRA Sunglasses"
             className="w-full h-[400px] md:h-[500px] object-cover rounded-xl shadow-lg"
           />
         </div>
         <div className="md:w-1/2">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">About EYRA</h2>
           <p className="text-gray-600 mb-4">
-            EYRA is committed to providing premium sunglasses that combine style, comfort, and protection. 
-            Our collections are carefully crafted for Men, Women, and Kids who love to make a statement with their eyewear.
+            EYRA delivers premium sunglasses that combine modern design,
+            durability, and advanced UV protection for everyday confidence.
           </p>
           <p className="text-gray-600 mb-6">
-            With a focus on quality and design, EYRA ensures that every pair of sunglasses meets the highest standards. 
-            Experience fashion-forward eyewear that keeps your eyes safe while looking amazing.
+            Each pair is crafted using high-quality materials to ensure
+            clarity, comfort, and long-lasting performance.
           </p>
-          <a 
-            href="/about" 
+          <a
+            href="/about"
             className="bg-gray-800 hover:bg-gray-700 text-white font-bold px-6 py-3 rounded-md shadow-lg transition"
           >
             Learn More
@@ -132,27 +144,35 @@ export default function Home() {
 
       {/* Feature Highlights */}
       <section className="max-w-7xl mx-auto py-16 px-4 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12">Why Choose EYRA</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-12">
+          Why Choose EYRA
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow hover:shadow-xl transition transform hover:-translate-y-2">
             <Award size={48} className="text-yellow-500 mb-4" />
-            <h3 className="font-bold text-xl mb-2">Premium Quality</h3>
-            <p className="text-gray-600 text-center">Top-grade lenses & frames designed for comfort and style.</p>
+            <h3 className="font-bold text-xl mb-2">Premium Frames</h3>
+            <p className="text-gray-600">
+              Lightweight and durable frames for all-day comfort.
+            </p>
           </div>
           <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow hover:shadow-xl transition transform hover:-translate-y-2">
             <Truck size={48} className="text-yellow-500 mb-4" />
             <h3 className="font-bold text-xl mb-2">Fast Shipping</h3>
-            <p className="text-gray-600 text-center">Get your favorite sunglasses delivered quickly to your door.</p>
+            <p className="text-gray-600">
+              Quick and secure delivery nationwide.
+            </p>
           </div>
           <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow hover:shadow-xl transition transform hover:-translate-y-2">
             <Headphones size={48} className="text-yellow-500 mb-4" />
             <h3 className="font-bold text-xl mb-2">24/7 Support</h3>
-            <p className="text-gray-600 text-center">Our team is always ready to assist you with any questions.</p>
+            <p className="text-gray-600">
+              Dedicated customer service anytime you need.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Newsletter / Subscription Section */}
+      {/* Newsletter */}
       <section className="bg-gray-100 py-16 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <span className="inline-block bg-white px-4 py-2 rounded-full shadow mb-4 font-semibold text-sm">
@@ -162,7 +182,8 @@ export default function Home() {
             Join Our <span className="text-yellow-600">Exclusive</span> Club
           </h2>
           <p className="text-gray-700 mb-6">
-            Subscribe to receive updates on new arrivals, exclusive offers, and fashion tips
+            Subscribe to receive updates on new arrivals, exclusive offers,
+            and eyewear trends.
           </p>
           <form className="flex flex-col sm:flex-row justify-center gap-4">
             <input
@@ -177,11 +198,9 @@ export default function Home() {
               Subscribe
             </button>
           </form>
-          <p className="text-gray-500 text-sm mt-4">
-            By subscribing, you agree to our Privacy Policy
-          </p>
         </div>
       </section>
+
 
       {/* Footer */}
      <footer className="bg-gray-50 text-gray-700 mt-16 border-t border-gray-200">
@@ -249,7 +268,7 @@ export default function Home() {
           <span>📞</span> +91 9087654321
         </p>
         <p className="flex items-center gap-2">
-          <span>✉️</span> support@eyra.com
+          <span>✉️</span> eyra@gmail.com
         </p>
       </div>
      </div>
