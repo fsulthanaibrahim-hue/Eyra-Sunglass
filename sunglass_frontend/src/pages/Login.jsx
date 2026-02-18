@@ -1,5 +1,5 @@
 // src/pages/Login.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Navbar from "../components/Navbar";
@@ -13,137 +13,163 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth(); // ✅ Use the custom hook
+  const { user, login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate('/products', { replace: true });
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!username || !password) {
       toast.error("All fields are required");
       return;
     }
-
     try {
       setLoading(true);
-
-      // Login API call
       const res = await API.post("/users/login/", { username, password });
       const accessToken = res.data.access;
       const refreshToken = res.data.refresh;
-
       if (!accessToken || !refreshToken) {
         toast.error("Login failed: No token returned");
         return;
       }
-
-      // Save tokens & update context
-      localStorage.setItem("access", accessToken);
       localStorage.setItem("refresh", refreshToken);
-      login({ username }); // Pass user info to context
-
+      const userData = {
+        username,
+        id: res.data.user?.id || null,
+        email: res.data.user?.email || null,
+        first_name: res.data.user?.first_name || '',
+        last_name: res.data.user?.last_name || '',
+      };
+      login(userData, accessToken);
       toast.success("Logged in successfully!");
-      navigate("/"); // redirect to home
     } catch (err) {
-      const message = err.response?.data?.detail || "Invalid username or password";
-      toast.error(message);
+      let errorMessage = "Invalid username or password";
+      if (err.response?.data?.detail) errorMessage = err.response.data.detail;
+      else if (err.response?.data?.message) errorMessage = err.response.data.message;
+      else if (err.response?.data?.non_field_errors) errorMessage = err.response.data.non_field_errors[0];
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-
-  const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await axios.post("http://127.0.0.1:8000/api/token/", {
-      username,
-      password
-    });
-
-    localStorage.setItem("access", res.data.access);
-    localStorage.setItem("refresh", res.data.refresh);
-
-    toast.success("Login successful!");
-    window.location.reload(); // reload page to use token
-  } catch (err) {
-    console.error(err);
-    toast.error("Login failed");
-  }
-};
-
-
+  if (user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-[#F7F2EC]" style={{ fontFamily: "'Jost', sans-serif" }}>
       <Navbar />
-      <div className="flex items-center justify-center px-4 pt-24 pb-12">
-        <div className="w-full max-w-sm">
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <div className="text-center mb-8">
-              <div className="w-12 h-12 bg-black rounded-xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
-              <p className="text-sm text-gray-500 mt-1">Sign in to your account</p>
-            </div>
 
+      <div className="flex items-center justify-center px-4 pt-24 pb-16 min-h-screen">
+        <div className="w-full max-w-sm">
+
+          {/* Header */}
+          <div className="text-center mb-8">
+            <p className="text-[10px] tracking-[0.25em] uppercase text-[#C9974A] mb-2 font-medium">
+              Welcome Back
+            </p>
+            <h1
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+              className="text-4xl font-semibold text-[#1C1612]"
+            >
+              Sign In
+            </h1>
+            <div className="flex items-center gap-3 mt-4 justify-center">
+              <div className="h-px w-12 bg-[#C9974A]/30" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#C9974A]/50" />
+              <div className="h-px w-12 bg-[#C9974A]/30" />
+            </div>
+          </div>
+
+          {/* Card */}
+          <div className="bg-white border border-[#6B4F3A]/10 rounded-xl p-8 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* Username */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
+                  Username
+                </label>
                 <input
                   type="text"
-                  placeholder="Enter username"
+                  placeholder="Enter your username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                  disabled={loading}
+                  autoComplete="username"
+                  required
+                  className="w-full px-4 py-3 bg-[#F7F2EC] border border-[#6B4F3A]/15 rounded-lg text-sm text-[#1C1612] placeholder-[#9A8070]/60 focus:outline-none focus:border-[#C9974A]/50 focus:ring-2 focus:ring-[#C9974A]/10 transition-all disabled:opacity-60"
                 />
               </div>
 
+              {/* Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
+                  Password
+                </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter password"
+                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all pr-11"
+                    disabled={loading}
+                    autoComplete="current-password"
+                    required
+                    className="w-full px-4 py-3 pr-11 bg-[#F7F2EC] border border-[#6B4F3A]/15 rounded-lg text-sm text-[#1C1612] placeholder-[#9A8070]/60 focus:outline-none focus:border-[#C9974A]/50 focus:ring-2 focus:ring-[#C9974A]/10 transition-all disabled:opacity-60"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    disabled={loading}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9A8070] hover:text-[#C9974A] transition-colors disabled:opacity-40"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
 
+              {/* Forgot Password */}
               <div className="text-right">
-                <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-black font-medium">Forgot password?</Link>
+                <Link
+                  to="/forgot-password"
+                  className="text-[11px] text-[#9A8070] hover:text-[#C9974A] transition-colors tracking-wide"
+                >
+                  Forgot password?
+                </Link>
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-3 rounded-lg font-semibold transition-all ${
-                  loading
-                    ? "bg-gray-400 cursor-not-allowed text-white"
-                    : "bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl"
-                }`}
+                className="w-full py-3 rounded-lg text-xs font-semibold tracking-widest uppercase transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed bg-[#1C1612] text-[#F7F2EC] hover:bg-[#C9974A] active:scale-[0.98]"
               >
-                {loading ? "Logging in..." : "Login"}
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-3.5 h-3.5 border-2 border-[#F7F2EC]/40 border-t-[#F7F2EC] rounded-full animate-spin" />
+                    Signing in...
+                  </span>
+                ) : (
+                  "Login"
+                )}
               </button>
             </form>
-
-            <p className="text-center text-sm text-gray-600 mt-6">
-              Don't have an account?{" "}
-              <Link to="/register" className="text-black font-semibold hover:underline">Register</Link>
-            </p>
           </div>
+
+          {/* Register Link */}
+          <p className="text-center text-xs text-[#9A8070] mt-6">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-[#C9974A] font-semibold hover:underline underline-offset-2 transition-colors"
+            >
+              Register
+            </Link>
+          </p>
+
         </div>
       </div>
     </div>

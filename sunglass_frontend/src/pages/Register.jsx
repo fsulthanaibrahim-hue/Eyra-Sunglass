@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Navbar from "../components/Navbar";
-import toast from "react-hot-toast"; // ✅ Import toast
+import toast from "react-hot-toast";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -20,29 +20,22 @@ export default function Register() {
     e.preventDefault();
 
     if (!username || !email || !password) {
-      toast.error("All fields are required"); // ✅ toast for empty fields
+      toast.error("All fields are required");
       return;
     }
 
     try {
       setLoading(true);
-
-      const res = await API.post("users/register/", {
-        username: username,
-        email: email,
-        password: password,
-      });
+      const res = await API.post("users/register/", { username, email, password });
 
       if (res.data.access) {
         login(res.data.access);
-        toast.success("Account created successfully!"); // ✅ success toast
+        toast.success("Account created successfully!");
         navigate("/");
       } else {
-        toast.error("Registration failed: no token returned"); // ✅ toast
+        toast.error("Registration failed: no token returned");
       }
     } catch (err) {
-      console.log("Register error:", err.response?.data);
-
       const errors = err.response?.data;
       if (errors?.username) toast.error("Username: " + errors.username.join(" "));
       else if (errors?.email) toast.error("Email: " + errors.email.join(" "));
@@ -52,94 +45,126 @@ export default function Register() {
       setLoading(false);
     }
   };
-  
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-[#F7F2EC]" style={{ fontFamily: "'Jost', sans-serif" }}>
       <Navbar />
-      
-      <div className="flex items-center justify-center px-4 pt-24 pb-12">
-        <div className="w-full max-w-sm">
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <div className="text-center mb-8">
-              <div className="w-12 h-12 bg-black rounded-xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">Create account</h2>
-              <p className="text-sm text-gray-500 mt-1">Sign up to get started</p>
-            </div>
 
+      <div className="flex items-center justify-center px-4 pt-24 pb-16 min-h-screen">
+        <div className="w-full max-w-sm">
+
+          {/* Header */}
+          <div className="text-center mb-8">
+            <p className="text-[10px] tracking-[0.25em] uppercase text-[#C9974A] mb-2 font-medium">
+              Join Us
+            </p>
+            <h1
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+              className="text-4xl font-semibold text-[#1C1612]"
+            >
+              Create Account
+            </h1>
+            <div className="flex items-center gap-3 mt-4 justify-center">
+              <div className="h-px w-12 bg-[#C9974A]/30" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#C9974A]/50" />
+              <div className="h-px w-12 bg-[#C9974A]/30" />
+            </div>
+          </div>
+
+          {/* Card */}
+          <div className="bg-white border border-[#6B4F3A]/10 rounded-xl p-8 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* Username */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
                   Username
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter username"
+                  placeholder="Enter your username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                  disabled={loading}
+                  autoComplete="username"
+                  required
+                  className="w-full px-4 py-3 bg-[#F7F2EC] border border-[#6B4F3A]/15 rounded-lg text-sm text-[#1C1612] placeholder-[#9A8070]/60 focus:outline-none focus:border-[#C9974A]/50 focus:ring-2 focus:ring-[#C9974A]/10 transition-all disabled:opacity-60"
                 />
               </div>
 
+              {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
                   Email
                 </label>
                 <input
                   type="email"
-                  placeholder="Enter email"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                  disabled={loading}
+                  autoComplete="email"
+                  required
+                  className="w-full px-4 py-3 bg-[#F7F2EC] border border-[#6B4F3A]/15 rounded-lg text-sm text-[#1C1612] placeholder-[#9A8070]/60 focus:outline-none focus:border-[#C9974A]/50 focus:ring-2 focus:ring-[#C9974A]/10 transition-all disabled:opacity-60"
                 />
               </div>
 
+              {/* Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
                   Password
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter password"
+                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all pr-11"
+                    disabled={loading}
+                    autoComplete="new-password"
+                    required
+                    className="w-full px-4 py-3 pr-11 bg-[#F7F2EC] border border-[#6B4F3A]/15 rounded-lg text-sm text-[#1C1612] placeholder-[#9A8070]/60 focus:outline-none focus:border-[#C9974A]/50 focus:ring-2 focus:ring-[#C9974A]/10 transition-all disabled:opacity-60"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    disabled={loading}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9A8070] hover:text-[#C9974A] transition-colors disabled:opacity-40"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-3 rounded-lg font-semibold transition-all ${
-                  loading
-                    ? "bg-gray-400 cursor-not-allowed text-white"
-                    : "bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl"
-                }`}
+                className="w-full py-3 rounded-lg text-xs font-semibold tracking-widest uppercase transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed bg-[#1C1612] text-[#F7F2EC] hover:bg-[#C9974A] active:scale-[0.98]"
               >
-                {loading ? "Creating account..." : "Register"}
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-3.5 h-3.5 border-2 border-[#F7F2EC]/40 border-t-[#F7F2EC] rounded-full animate-spin" />
+                    Creating account...
+                  </span>
+                ) : (
+                  "Register"
+                )}
               </button>
             </form>
-
-            <p className="text-center text-sm text-gray-600 mt-6">
-              Already have an account?{" "}
-              <Link to="/login" className="text-black font-semibold hover:underline">
-                Login
-              </Link>
-            </p>
           </div>
+
+          {/* Login Link */}
+          <p className="text-center text-xs text-[#9A8070] mt-6">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-[#C9974A] font-semibold hover:underline underline-offset-2 transition-colors"
+            >
+              Login
+            </Link>
+          </p>
+
         </div>
       </div>
     </div>

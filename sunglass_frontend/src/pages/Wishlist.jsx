@@ -1,136 +1,96 @@
 import { useEffect, useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import API from '../api/axios';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import API from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { toast } from 'react-hot-toast';
 
 export default function Wishlist() {
-  const { user, token } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const [wishlist, setWishlist] = useState([]);
+  const { user } = useContext(AuthContext);
+  const { addToCart } = useCart();
+  const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [removingId, setRemovingId] = useState(null);
 
-  useEffect(() => {
-    if (!user) {
-      setWishlist([]);
-      setLoading(false);
-      return;
-    }
+  useEffect(() => { loadWishlist(); }, []);
 
-    setLoading(true);
-    setError('');
-
-    API.get('/wishlist/', {
-      headers: token ? { Authorization: `Token ${token}` } : {},
-      withCredentials: true,
-    })
-      .then((res) => setWishlist(res.data))
-      .catch((err) => {
-        console.error('Wishlist fetch error:', err);
-        if (err.response) {
-          if (err.response.status === 401) setError('You must be logged in to view your wishlist.');
-          else if (err.response.status === 404) setError('Wishlist not found. Please try again.');
-          else setError('Something went wrong while fetching your wishlist.');
-        } else {
-          setError('Network error. Check your connection.');
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [user, token]);
-
-  const removeItem = (id) => {
-    setRemovingId(id);
-    API.delete(`/wishlist/${id}/`, {
-      headers: token ? { Authorization: `Token ${token}` } : {},
-      withCredentials: true,
-    })
-      .then(() => {
-        setWishlist((prev) => prev.filter((item) => item.id !== id));
-        toast.success('Removed from wishlist');
-      })
-      .catch((err) => {
-        console.error('Remove item error:', err);
-        toast.error('Failed to remove item');
-      })
-      .finally(() => setRemovingId(null));
-  };
-
-  const addToCart = async (productId, wishlistItemId) => {
+  const loadWishlist = async () => {
     try {
-      await API.post('cart/', { product: productId, quantity: 1 });
-      toast.success('Added to cart');
-      removeItem(wishlistItemId);
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to add to cart');
+      setLoading(true);
+      const saved = localStorage.getItem('wishlist');
+      const ids = saved ? JSON.parse(saved) : [];
+      if (ids.length === 0) { setWishlistItems([]); setLoading(false); return; }
+      const products = [];
+      for (const id of ids) {
+        try {
+          const res = await API.get(`products/${id}/`);
+          products.push(res.data);
+        } catch (err) { console.error(`Error fetching product ${id}:`, err); }
+      }
+      setWishlistItems(products);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to load wishlist');
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="flex flex-col items-center justify-center min-h-[60vh] pt-24">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Login Required</h2>
-          <p className="text-gray-600 mb-6">Please login to view your wishlist</p>
-          <Link to="/login" className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-semibold">
-            Login Now
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const removeItem = (productId) => {
+    const saved = localStorage.getItem('wishlist');
+    const ids = saved ? JSON.parse(saved) : [];
+    const newIds = ids.filter(id => Number(id) !== Number(productId));
+    localStorage.setItem('wishlist', JSON.stringify(newIds));
+    setWishlistItems(prev => prev.filter(item => item.id !== productId));
+    window.dispatchEvent(new Event('storage'));
+    toast.success('Removed from wishlist');
+  };
 
+  const handleAddToCart = (product) => {
+    addToCart({ id: product.id, name: product.name, price: product.price, image: product.image });
+    removeItem(product.id);
+    toast.success(`"${product.name}" added to cart`);
+  };
+
+  const getImageUrl = (product) => {
+    if (!product?.image) return '/placeholder.jpg';
+    if (product.image.startsWith('http')) return product.image;
+    return `http://127.0.0.1:8000${product.image}`;
+  };
+
+  // ── Loading ──
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div style={{ minHeight: "100vh", background: "#F7F2EC" }}>
+        <style>{`@keyframes eyra-spin { to { transform: rotate(360deg); } }`}</style>
         <Navbar />
-        <div className="flex flex-col items-center justify-center min-h-[60vh] pt-24">
-          <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading your wishlist...</p>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: "16px" }}>
+          <div style={{ width: "44px", height: "44px", border: "2px solid rgba(201,151,74,0.2)", borderTopColor: "#C9974A", borderRadius: "50%", animation: "eyra-spin 0.9s linear infinite" }} />
+          <p style={{ fontFamily: "'Jost',sans-serif", fontSize: "11px", letterSpacing: "4px", textTransform: "uppercase", color: "#6B4F3A" }}>Loading Wishlist</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  // ── Empty State ──
+  if (wishlistItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div style={{ minHeight: "100vh", background: "#F7F2EC" }}>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Jost:wght@300;400;500;600&display=swap');`}</style>
         <Navbar />
-        <div className="flex flex-col items-center justify-center min-h-[60vh] pt-24">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-red-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div style={{ textAlign: "center", paddingTop: "140px", padding: "140px 24px 80px" }}>
+          <svg style={{ width: "72px", height: "72px", color: "rgba(201,151,74,0.3)", margin: "0 auto 28px", display: "block" }} fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24">
+            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-semibold"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (wishlist.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="flex flex-col items-center justify-center min-h-[60vh] pt-24">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Your wishlist is empty</h2>
-          <p className="text-gray-600 mb-6">Start adding products you love!</p>
-          <Link to="/products" className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-semibold">
+          <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "2rem", fontStyle: "italic", color: "#6B4F3A", marginBottom: "10px" }}>Your wishlist is empty</p>
+          <p style={{ fontFamily: "'Jost',sans-serif", fontSize: "13px", color: "#9A8070", fontWeight: 300, marginBottom: "36px", letterSpacing: "1px" }}>Save items you love and find them here</p>
+          <Link to="/products" style={{
+            display: "inline-block",
+            background: "#1C1612", color: "#F7F2EC",
+            padding: "14px 36px",
+            fontFamily: "'Jost',sans-serif", fontSize: "11px", letterSpacing: "3px", textTransform: "uppercase", fontWeight: 500,
+            textDecoration: "none"
+          }}>
             Browse Products
           </Link>
         </div>
@@ -138,102 +98,122 @@ export default function Wishlist() {
     );
   }
 
+  // ── Main Page ──
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ minHeight: "100vh", background: "#F7F2EC", fontFamily: "'Jost',sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Jost:wght@300;400;500;600&display=swap');
+        @keyframes eyra-spin { to { transform: rotate(360deg); } }
+
+        .wl-card {
+          background: #fff;
+          border: 1px solid rgba(107,79,58,0.12);
+          overflow: hidden;
+          transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
+        }
+        .wl-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 16px 40px rgba(28,22,18,0.1);
+          border-color: rgba(201,151,74,0.3);
+        }
+        .wl-card-img {
+          height: 240px;
+          background: #EDE5D8;
+          overflow: hidden;
+        }
+        .wl-card-img img {
+          width: 100%; height: 100%;
+          object-fit: cover; display: block;
+          transition: transform 0.5s ease;
+        }
+        .wl-card:hover .wl-card-img img { transform: scale(1.05); }
+
+        .wl-btn-cart {
+          width: 100%;
+          background: #1C1612;
+          color: #F7F2EC;
+          padding: 12px;
+          border: none;
+          cursor: pointer;
+          font-family: 'Jost', sans-serif;
+          font-size: 11px;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          font-weight: 500;
+          transition: background 0.3s;
+        }
+        .wl-btn-cart:hover { background: #6B4F3A; }
+
+        .wl-btn-remove {
+          width: 100%;
+          background: transparent;
+          color: #9A8070;
+          padding: 11px;
+          border: 1px solid rgba(107,79,58,0.2);
+          cursor: pointer;
+          font-family: 'Jost', sans-serif;
+          font-size: 11px;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          font-weight: 400;
+          transition: color 0.3s, border-color 0.3s;
+        }
+        .wl-btn-remove:hover { color: #c0392b; border-color: #c0392b; }
+      `}</style>
+
       <Navbar />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-24">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">My Wishlist</h1>
-          <p className="text-gray-600">{wishlist.length} {wishlist.length === 1 ? 'item' : 'items'} saved</p>
+
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "100px 24px 80px" }}>
+
+        {/* Title + Count */}
+        <div style={{ marginBottom: "36px", paddingBottom: "24px", borderBottom: "1px solid rgba(107,79,58,0.1)" }}>
+          <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 300, color: "#1C1612", fontStyle: "italic", marginBottom: "8px" }}>
+            My Wishlist
+          </h1>
+          <p style={{ fontSize: "12px", letterSpacing: "2px", textTransform: "uppercase", color: "#6B4F3A" }}>
+            <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.3rem", fontStyle: "italic", color: "#C9974A", marginRight: "6px" }}>
+              {wishlistItems.length}
+            </span>
+            saved {wishlistItems.length === 1 ? "item" : "items"}
+          </p>
         </div>
 
-        {/* Wishlist Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {wishlist.map((item) => {
-            const imageUrl = item.product.image?.startsWith('http') 
-              ? item.product.image 
-              : `http://127.0.0.1:8000${item.product.image}`;
+        {/* Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "24px" }}>
+          {wishlistItems.map((item) => (
+            <div key={item.id} className="wl-card">
 
-            return (
-              <div
-                key={item.id}
-                className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200"
-              >
-                {/* Product Image */}
-                <Link to={`/products/${item.product.id}`} className="block relative">
-                  <div className="relative bg-gray-100 h-64 overflow-hidden">
-                    <img
-                      src={imageUrl}
-                      alt={item.product.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </div>
+              <Link to={`/products/${item.id}`} style={{ textDecoration: "none", display: "block" }}>
+                <div className="wl-card-img">
+                  <img src={getImageUrl(item)} alt={item.name} />
+                </div>
+              </Link>
+
+              <div style={{ padding: "18px 20px 20px", borderTop: "1px solid rgba(107,79,58,0.08)" }}>
+                <Link to={`/products/${item.id}`} style={{ textDecoration: "none" }}>
+                  <h3 style={{
+                    fontFamily: "'Cormorant Garamond',serif",
+                    fontSize: "1.15rem", fontWeight: 400, color: "#1C1612",
+                    marginBottom: "6px", whiteSpace: "nowrap",
+                    overflow: "hidden", textOverflow: "ellipsis"
+                  }}>
+                    {item.name}
+                  </h3>
                 </Link>
 
-                {/* Product Info */}
-                <div className="p-5">
-                  <Link to={`/products/${item.product.id}`}>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 min-h-[3.5rem] hover:text-black transition-colors">
-                      {item.product.name}
-                    </h3>
-                  </Link>
-                  
-                  <p className="text-2xl font-bold text-black mb-4">
-                    ₹{item.product.price}
-                  </p>
+                <p style={{ fontSize: "1rem", fontWeight: 600, color: "#6B4F3A", letterSpacing: "0.5px", marginBottom: "18px" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 300, color: "#9A8070", marginRight: "1px" }}>₹</span>
+                  {item.price}
+                </p>
 
-                  {/* Action Buttons */}
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => addToCart(item.product.id, item.id)}
-                      className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-all duration-300 flex items-center justify-center gap-2"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      Add to Cart
-                    </button>
-
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      disabled={removingId === item.id}
-                      className="w-full bg-white text-red-600 border-2 border-red-600 py-3 rounded-lg font-semibold hover:bg-red-50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {removingId === item.id ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-                          Removing...
-                        </>
-                      ) : (
-                        <>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                          </svg>
-                          Remove
-                        </>
-                      )}
-                    </button>
-                  </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <button onClick={() => handleAddToCart(item)} className="wl-btn-cart">Add to Cart</button>
+                  <button onClick={() => removeItem(item.id)} className="wl-btn-remove">Remove</button>
                 </div>
               </div>
-            );
-          })}
-        </div>
 
-        {/* Continue Shopping */}
-        <div className="mt-12 text-center">
-          <Link 
-            to="/products"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-black font-semibold transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-            Continue Shopping
-          </Link>
+            </div>
+          ))}
         </div>
       </div>
     </div>
