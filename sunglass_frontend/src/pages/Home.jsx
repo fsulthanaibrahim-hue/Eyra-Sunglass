@@ -582,7 +582,7 @@ export default function Home() {
         className="relative h-[600px] overflow-hidden cursor-pointer group"
         onClick={() => navigate("/products")}
       >
-        <video autoPlay loop muted playsInline className="w-full h-full object-cover">
+        <video autoPlay loop muted playsInline className="w-full h-260 object-cover">
           <source src="/images/video1.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-r from-[#1C1612]/90 to-[#1C1612]/50 flex items-center group-hover:from-[#1C1612]/95 transition-all duration-500">
