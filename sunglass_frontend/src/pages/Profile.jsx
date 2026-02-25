@@ -72,14 +72,25 @@ export default function Profile() {
         } catch (err) {}
       }
       if (success && response) {
-        login(response.data, token);
+        // 🔥 Ensure the user object contains a full_name field for checkout
+        const updatedUser = {
+          ...response.data,
+          full_name: `${response.data.first_name || ''} ${response.data.last_name || ''}`.trim()
+        };
+        login(updatedUser, token);
         toast.success('Profile updated successfully');
         setEditing(false);
       } else {
         throw new Error('All endpoints failed');
       }
     } catch (error) {
-      const updatedUser = { ...user, ...profileData };
+      // Fallback to local update
+      const updatedUser = {
+        ...user,
+        ...profileData,
+        // 🔥 Add full_name for checkout
+        full_name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim()
+      };
       login(updatedUser, token);
       localStorage.setItem('user', JSON.stringify(updatedUser));
       toast.success('Profile updated locally');

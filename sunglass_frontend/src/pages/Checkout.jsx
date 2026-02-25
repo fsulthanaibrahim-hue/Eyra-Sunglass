@@ -23,6 +23,22 @@ export default function Checkout() {
     country: 'India'
   });
 
+  // ✅ Pre-fill address from user profile when available
+  useEffect(() => {
+    if (user) {
+      setAddress({
+        full_name: user.full_name || '',
+        phone: user.phone || '',
+        address_line1: user.address_line1 || '',
+        address_line2: user.address_line2 || '',
+        city: user.city || '',
+        state: user.state || '',
+        pincode: user.pincode || '',
+        country: user.country || 'India'
+      });
+    }
+  }, [user]);
+
   useEffect(() => {
     if (!user) { toast.error('Please login to checkout'); navigate('/login'); }
   }, [user, navigate]);
@@ -47,6 +63,16 @@ export default function Checkout() {
   };
 
   const handlePlaceOrder = async () => {
+    // ✅ Check if user profile is complete (using actual user data)
+    const requiredFields = ['full_name', 'phone', 'address_line1', 'city', 'state', 'pincode'];
+    const isProfileComplete = requiredFields.every(field => user?.[field] && user[field].trim() !== '');
+    
+    if (!isProfileComplete) {
+      toast.error('Please complete your profile before placing an order');
+      navigate('/profile', { state: { from: '/checkout' } });
+      return;
+    }
+
     if (!validateForm()) return;
     setLoading(true);
     try {

@@ -18,7 +18,7 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     
-    # ✅ Address fields added
+    # Address fields
     full_name = models.CharField(max_length=100, blank=True, null=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     address_line1 = models.CharField(max_length=255, blank=True, null=True)
@@ -41,4 +41,3 @@ class OrderItem(models.Model):
     
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
-    

@@ -10,7 +10,8 @@ class OrderListCreateAPIView(APIView):
 
     def get(self, request):
         orders = Order.objects.filter(user=request.user).order_by('-created_at')
-        serializer = OrderSerializer(orders, many=True)
+        # ✅ Pass request context to serializer for absolute image URLs
+        serializer = OrderSerializer(orders, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request):
@@ -22,7 +23,6 @@ class OrderListCreateAPIView(APIView):
 
         total_price = 0
         
-        # Create order with address
         order = Order.objects.create(
             user=request.user,
             total_price=0,
@@ -57,7 +57,8 @@ class OrderListCreateAPIView(APIView):
         order.total_price = total_price
         order.save()
 
-        serializer = OrderSerializer(order)
+        # ✅ Pass context here as well (optional but consistent)
+        serializer = OrderSerializer(order, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -74,16 +75,15 @@ class OrderDetailAPIView(APIView):
         order = self.get_object(pk, request.user)
         if not order:
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = OrderSerializer(order)
+        # ✅ Pass context
+        serializer = OrderSerializer(order, context={'request': request})
         return Response(serializer.data)
 
-    # ✅ PUT method for full update
     def put(self, request, pk):
         order = self.get_object(pk, request.user)
         if not order:
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        # Only allow cancellation
         if request.data.get('status') == 'cancelled':
             if order.status not in ['pending']:
                 return Response(
@@ -93,16 +93,14 @@ class OrderDetailAPIView(APIView):
             
             order.status = 'cancelled'
             order.save()
-            serializer = OrderSerializer(order)
+            serializer = OrderSerializer(order, context={'request': request})
             return Response(serializer.data)
         
         return Response({"detail": "Only cancellation is allowed"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # ✅ PATCH method for partial update
     def patch(self, request, pk):
         return self.put(request, pk)
 
-    # ✅ POST method for cancel endpoint
     def post(self, request, pk):
         order = self.get_object(pk, request.user)
         if not order:
@@ -116,5 +114,5 @@ class OrderDetailAPIView(APIView):
         
         order.status = 'cancelled'
         order.save()
-        serializer = OrderSerializer(order)
+        serializer = OrderSerializer(order, context={'request': request})
         return Response(serializer.data)
