@@ -1,4 +1,4 @@
-// pages/OrderDetail.jsx (Image Fixed Version)
+// pages/OrderDetail.jsx (Fully Updated)
 import { useEffect, useState, useContext } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -114,32 +114,21 @@ export default function OrderDetail() {
     }
   };
 
-  // ✅ FIXED: Same image URL handling as Orders.jsx
+  // Image URL handling
   const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
-    
-    // If it's already a full URL
     if (imagePath.startsWith('http')) return imagePath;
-    
-    // If it's a relative path starting with /media or /uploads
     if (imagePath.startsWith('/media') || imagePath.startsWith('/uploads')) {
       return `http://127.0.0.1:8000${imagePath}`;
     }
-    
-    // If it's just a filename
     if (!imagePath.includes('/')) {
       return `http://127.0.0.1:8000/media/products/${imagePath}`;
     }
-    
-    // Default case
     return `http://127.0.0.1:8000${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
   };
 
-  // ✅ FIXED: Get item image from multiple possible sources
   const getItemImage = (item) => {
     if (!item) return null;
-    
-    // Try all possible image locations
     const possibleImages = [
       item.product_image,
       item.product?.image,
@@ -148,19 +137,16 @@ export default function OrderDetail() {
       item.product?.images?.[0],
       item.thumbnail,
       item.product?.thumbnail,
-      // If product has image field directly
       item.product && typeof item.product === 'object' ? item.product.image : null
     ];
-    
-    // Return the first valid image
     for (const img of possibleImages) {
       if (img) return img;
     }
-    
     return null;
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
@@ -254,7 +240,7 @@ export default function OrderDetail() {
           </div>
         </div>
 
-        {/* ✅ FIXED: Order Items with Images - Now Working */}
+        {/* Order Items with Images */}
         <div className="bg-white border border-[#6B4F3A]/10 rounded-lg overflow-hidden mb-6">
           <div className="p-6 border-b border-[#6B4F3A]/10">
             <div className="flex items-center gap-2">
@@ -265,13 +251,12 @@ export default function OrderDetail() {
           
           <div className="divide-y divide-[#6B4F3A]/10">
             {order.items?.map((item, idx) => {
-              // ✅ FIXED: Get image using helper function
               const imageUrl = getItemImage(item);
               const itemName = item.product_name || item.name || item.product?.name || 'Product';
               
               return (
                 <div key={idx} className="p-6 flex flex-col sm:flex-row gap-6 hover:bg-[#F7F2EC]/50 transition-colors">
-                  {/* ✅ FIXED: Product Image with better display */}
+                  {/* Product Image */}
                   <div className="w-24 h-24 sm:w-28 sm:h-28 bg-[#F7F2EC] rounded-lg border border-[#6B4F3A]/10 overflow-hidden flex-shrink-0 shadow-md mx-auto sm:mx-0">
                     {imageUrl ? (
                       <img 
@@ -281,7 +266,6 @@ export default function OrderDetail() {
                         onError={(e) => {
                           console.log('Image load failed for item:', itemName);
                           e.target.onerror = null;
-                          // Show placeholder with first letter
                           e.target.src = `https://placehold.co/112x112/F7F2EC/C9974A?text=${itemName.charAt(0)}`;
                         }}
                       />
@@ -295,7 +279,8 @@ export default function OrderDetail() {
 
                   {/* Product Details */}
                   <div className="flex-1 text-center sm:text-left">
-                    <Link to={`/products/${item.product}`} className="hover:underline inline-block">
+                    {/* ✅ FIXED: Use item.product.id for the link */}
+                    <Link to={`/products/${item.product?.id}`} className="hover:underline inline-block">
                       <h3 className="font-['Cormorant_Garamond',serif] text-xl text-[#1C1612] mb-2">
                         {itemName}
                       </h3>
@@ -324,7 +309,7 @@ export default function OrderDetail() {
           </div>
         </div>
 
-        {/* Shipping Address - Keep as is */}
+        {/* Shipping Address */}
         <div className="bg-white border border-[#6B4F3A]/10 rounded-lg overflow-hidden mb-6">
           <div className="p-6 border-b border-[#6B4F3A]/10">
             <div className="flex items-center gap-2">
@@ -445,13 +430,13 @@ export default function OrderDetail() {
           </button>
         )}
 
-        {/* Cancelled Message */}
+        {/* ✅ FIXED: Cancelled message uses only created_at */}
         {isCancelled && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
             <XCircle size={48} className="text-red-500 mx-auto mb-4" />
             <h3 className="font-['Cormorant_Garamond',serif] text-2xl text-red-700 mb-2">Order Cancelled</h3>
             <p className="text-red-600 text-sm">
-              This order was cancelled on {formatDate(order.updated_at || order.created_at)}
+              This order was cancelled on {formatDate(order.created_at)}
             </p>
           </div>
         )}

@@ -5,15 +5,19 @@ import Navbar from '../components/Navbar';
 import { toast } from 'react-hot-toast';
 
 export default function Cart() {
-  const { cartItems, removeFromCart, updateQuantity, cartCount } = useCart();
+  const { cartItems, removeFromCart, updateQuantity } = useCart(); // ✅ cartCount removed – we compute it ourselves
   const [total, setTotal] = useState(0);
 
+  // Calculate total whenever cart changes
   useEffect(() => {
     const newTotal = cartItems.reduce((sum, item) =>
       sum + (item.price * (item.quantity || 1)), 0
     );
     setTotal(newTotal);
   }, [cartItems]);
+
+  // Calculate total number of items (sum of quantities)
+  const itemCount = cartItems.reduce((count, item) => count + (item.quantity || 1), 0);
 
   const handleQuantityChange = (itemId, newQuantity) => {
     if (newQuantity < 1) return;
@@ -151,9 +155,9 @@ export default function Cart() {
           </h1>
           <p style={{ fontSize: "12px", letterSpacing: "2px", textTransform: "uppercase", color: "#6B4F3A" }}>
             <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.3rem", fontStyle: "italic", color: "#C9974A", marginRight: "6px" }}>
-              {cartCount}
+              {itemCount}
             </span>
-            {cartCount === 1 ? "item" : "items"} in your cart
+            {itemCount === 1 ? "item" : "items"} in your cart
           </p>
         </div>
 
@@ -233,7 +237,7 @@ export default function Cart() {
             {/* Breakdown */}
             <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "24px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "13px", color: "#6B4F3A", fontWeight: 300 }}>Subtotal ({cartCount} items)</span>
+                <span style={{ fontSize: "13px", color: "#6B4F3A", fontWeight: 300 }}>Subtotal ({itemCount} items)</span>
                 <span style={{ fontSize: "13px", color: "#1C1612", fontWeight: 500 }}>₹{total}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
