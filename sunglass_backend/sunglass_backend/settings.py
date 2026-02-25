@@ -163,8 +163,8 @@ from datetime import timedelta
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),  # 1 year (instead of None)
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),  # 1 year
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365), 
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),  
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,

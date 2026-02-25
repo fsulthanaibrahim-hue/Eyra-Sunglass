@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -65,7 +64,6 @@ export default function Login() {
       <div className="flex items-center justify-center px-4 pt-24 pb-16 min-h-screen">
         <div className="w-full max-w-sm">
 
-          {/* Header */}
           <div className="text-center mb-8">
             <p className="text-[10px] tracking-[0.25em] uppercase text-[#C9974A] mb-2 font-medium">
               Welcome Back
@@ -87,7 +85,6 @@ export default function Login() {
           <div className="bg-white border border-[#6B4F3A]/10 rounded-xl p-8 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-5">
 
-              {/* Username */}
               <div>
                 <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
                   Username
@@ -104,7 +101,6 @@ export default function Login() {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
                   Password
@@ -131,7 +127,6 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Forgot Password */}
               <div className="text-right">
                 <Link
                   to="/forgot-password"
@@ -141,7 +136,6 @@ export default function Login() {
                 </Link>
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
@@ -159,7 +153,6 @@ export default function Login() {
             </form>
           </div>
 
-          {/* Register Link */}
           <p className="text-center text-xs text-[#9A8070] mt-6">
             Don't have an account?{" "}
             <Link

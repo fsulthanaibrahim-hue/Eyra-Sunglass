@@ -1,4 +1,3 @@
-// context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,18 +9,16 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [sessionExpiry, setSessionExpiry] = useState(null);
 
-  // Check token expiry
   const checkTokenExpiry = () => {
     const token = localStorage.getItem('access');
     if (!token) return false;
 
     try {
-      // Decode token (assuming JWT)
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const payload = JSON.parse(window.atob(base64));
       
-      const exp = payload.exp * 1000; // Convert to milliseconds
+      const exp = payload.exp * 1000; 
       const now = Date.now();
       const timeLeft = exp - now;
       
@@ -29,7 +26,6 @@ export const AuthProvider = ({ children }) => {
       
       setSessionExpiry(exp);
       
-      // Return true if token is still valid
       return exp > now;
     } catch (e) {
       console.error('Error checking token expiry:', e);
@@ -37,7 +33,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Load user from localStorage on mount
   useEffect(() => {
     const loadUser = () => {
       try {
@@ -50,7 +45,6 @@ export const AuthProvider = ({ children }) => {
         console.log('Stored user:', storedUser ? '✅' : '❌');
         
         if (storedToken && storedUser) {
-          // Check if token is expired
           if (!checkTokenExpiry()) {
             console.log('⚠️ Token expired on load');
             logout();
@@ -71,7 +65,6 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  // Auto logout when token expires
   useEffect(() => {
     if (!sessionExpiry) return;
 
@@ -82,13 +75,11 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    // Set timeout to logout when token expires
     const logoutTimer = setTimeout(() => {
       console.log('⏰ Token expired, logging out...');
       logout();
     }, timeUntilExpiry);
 
-    // Cleanup timer on unmount or when sessionExpiry changes
     return () => clearTimeout(logoutTimer);
   }, [sessionExpiry]);
 
@@ -102,7 +93,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('refresh', refreshToken);
     localStorage.setItem('user', JSON.stringify(userData));
     
-    // Check and set expiry
     checkTokenExpiry();
     
     console.log('✅ Login successful, user saved');
@@ -119,7 +109,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('refresh');
     localStorage.removeItem('user');
     
-    // Redirect to login if not already there
     if (!window.location.pathname.includes('/login')) {
       window.location.href = '/login';
     }
@@ -127,7 +116,6 @@ export const AuthProvider = ({ children }) => {
     console.log('✅ Logout successful');
   };
 
-  // Periodic token check (every minute)
   useEffect(() => {
     const interval = setInterval(() => {
       if (token) {
@@ -137,7 +125,7 @@ export const AuthProvider = ({ children }) => {
           logout();
         }
       }
-    }, 60000); // Check every minute
+    }, 60000); 
 
     return () => clearInterval(interval);
   }, [token]);

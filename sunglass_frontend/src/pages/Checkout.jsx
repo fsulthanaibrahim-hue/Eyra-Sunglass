@@ -23,7 +23,6 @@ export default function Checkout() {
     country: 'India'
   });
 
-  // ✅ Pre-fill address from user profile when available
   useEffect(() => {
     if (user) {
       setAddress({
@@ -63,7 +62,6 @@ export default function Checkout() {
   };
 
   const handlePlaceOrder = async () => {
-    // ✅ Check if user profile is complete (using actual user data)
     const requiredFields = ['full_name', 'phone', 'address_line1', 'city', 'state', 'pincode'];
     const isProfileComplete = requiredFields.every(field => user?.[field] && user[field].trim() !== '');
     
@@ -217,7 +215,6 @@ export default function Checkout() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
-              {/* Full Name */}
               <div>
                 <label className="eyra-label">
                   Full Name <span style={{ color: "#C9974A" }}>*</span>
@@ -227,7 +224,6 @@ export default function Checkout() {
                   placeholder="Enter your full name" />
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="eyra-label">
                   Phone Number <span style={{ color: "#C9974A" }}>*</span>
@@ -237,7 +233,6 @@ export default function Checkout() {
                   placeholder="10-digit phone number" maxLength="10" />
               </div>
 
-              {/* Address Line 1 */}
               <div>
                 <label className="eyra-label">
                   Address Line 1 <span style={{ color: "#C9974A" }}>*</span>
@@ -247,7 +242,6 @@ export default function Checkout() {
                   placeholder="House number, Street name" />
               </div>
 
-              {/* Address Line 2 */}
               <div>
                 <label className="eyra-label">Address Line 2 <span style={{ color: "#9A8070", fontSize: "9px" }}>(Optional)</span></label>
                 <input type="text" name="address_line2" value={address.address_line2}
@@ -255,7 +249,6 @@ export default function Checkout() {
                   placeholder="Landmark, Area" />
               </div>
 
-              {/* City / State / Pincode */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
                 <div>
                   <label className="eyra-label">City <span style={{ color: "#C9974A" }}>*</span></label>
@@ -327,7 +320,6 @@ export default function Checkout() {
               </p>
             </div>
 
-            {/* Place Order */}
             <button onClick={handlePlaceOrder} disabled={loading} className="place-order-btn">
               {loading ? (
                 <>

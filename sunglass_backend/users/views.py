@@ -1,4 +1,3 @@
-# users/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -21,7 +20,6 @@ class RegisterUserAPIView(APIView):
         if serializer.is_valid():
             user = serializer.save()
 
-            # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
 
             return Response({
@@ -54,7 +52,6 @@ class UserDetailAPIView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
     
-    # ✅ Added PUT method for updates
     def put(self, request):
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
@@ -62,7 +59,6 @@ class UserDetailAPIView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    # ✅ Added PATCH method for partial updates
     def patch(self, request):
         serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():

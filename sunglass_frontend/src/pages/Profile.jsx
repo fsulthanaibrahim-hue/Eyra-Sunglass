@@ -72,7 +72,6 @@ export default function Profile() {
         } catch (err) {}
       }
       if (success && response) {
-        // 🔥 Ensure the user object contains a full_name field for checkout
         const updatedUser = {
           ...response.data,
           full_name: `${response.data.first_name || ''} ${response.data.last_name || ''}`.trim()
@@ -84,11 +83,9 @@ export default function Profile() {
         throw new Error('All endpoints failed');
       }
     } catch (error) {
-      // Fallback to local update
       const updatedUser = {
         ...user,
         ...profileData,
-        // 🔥 Add full_name for checkout
         full_name: `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim()
       };
       login(updatedUser, token);
@@ -154,7 +151,7 @@ export default function Profile() {
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
       <Navbar />
 
-      {/* Hero Section — reduced height */}
+      {/* Hero Section */}
       <div className="bg-gradient-to-b from-[#1C1612] via-[#2E1F14] to-[#3A2518] pt-24 pb-8 px-6 text-center relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,151,74,0.07)_0%,transparent_65%)] rounded-full pointer-events-none" />
 
@@ -198,7 +195,7 @@ export default function Profile() {
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-[#9A8070]">Member Since</span>
                   <span className="font-['Cormorant_Garamond',serif] text-base font-semibold italic text-[#C9974A]">
-                    {user.date_joined ? new Date(user.date_joined).getFullYear() : '2025'}
+                    {user.date_joined ? new Date(user.date_joined).getFullYear() : '2026'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">

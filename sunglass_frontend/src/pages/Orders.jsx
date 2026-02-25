@@ -1,4 +1,3 @@
-// pages/Orders.jsx (Improved Version)
 import { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -60,34 +59,27 @@ export default function Orders() {
     }
   };
 
-  // ✅ IMPROVED: Better image URL handling
   const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
     
-    // If it's already a full URL
     if (imagePath.startsWith('http')) return imagePath;
     
-    // If it's a relative path starting with /media or /uploads
     if (imagePath.startsWith('/media') || imagePath.startsWith('/uploads')) {
       return `http://127.0.0.1:8000${imagePath}`;
     }
     
-    // If it's just a filename
     if (!imagePath.includes('/')) {
       return `http://127.0.0.1:8000/media/products/${imagePath}`;
     }
     
-    // Default case
     return `http://127.0.0.1:8000${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
   };
 
-  // ✅ NEW: Helper function to get first item image from multiple possible sources
   const getFirstItemImage = (order) => {
     if (!order.items || order.items.length === 0) return null;
     
     const firstItem = order.items[0];
     
-    // Try all possible image locations
     const possibleImages = [
       firstItem.product_image,
       firstItem.product?.image,
@@ -98,7 +90,6 @@ export default function Orders() {
       firstItem.product?.thumbnail
     ];
     
-    // Return the first valid image
     for (const img of possibleImages) {
       if (img) return img;
     }
@@ -106,7 +97,6 @@ export default function Orders() {
     return null;
   };
 
-  // ✅ NEW: Get first item name
   const getFirstItemName = (order) => {
     if (!order.items || order.items.length === 0) return 'Product';
     
@@ -183,7 +173,6 @@ export default function Orders() {
               const statusClass = getStatusColor(order.status);
               const itemCount = order.items?.length || 0;
               
-              // ✅ FIXED: Get first item image using helper function
               const firstItemImage = getFirstItemImage(order);
               const firstItemName = getFirstItemName(order);
               
@@ -199,7 +188,6 @@ export default function Orders() {
                     <div className="p-4 border-b border-[#6B4F3A]/10 bg-gradient-to-r from-[#1C1612]/5 to-transparent">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          {/* ✅ FIXED: Product Image Preview with better error handling */}
                           <div className="w-16 h-16 bg-[#F7F2EC] rounded-lg border border-[#6B4F3A]/10 overflow-hidden flex-shrink-0 shadow-sm">
                             {firstItemImage ? (
                               <img 
@@ -231,7 +219,6 @@ export default function Orders() {
                                 {formatDate(order.created_at)}
                               </p>
                             </div>
-                            {/* ✅ NEW: Show product name preview */}
                             <p className="text-xs text-[#6B4F3A] mt-1 truncate max-w-[200px]">
                               {firstItemName}
                             </p>
@@ -253,7 +240,6 @@ export default function Orders() {
                       </div>
                     </div>
 
-                    {/* Order Items Preview with Images - Keep existing */}
                     {itemCount > 0 && (
                       <div className="p-4">
                         <div className="flex items-center justify-between mb-2">
@@ -268,7 +254,6 @@ export default function Orders() {
                         
                         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                           {order.items.slice(0, 5).map((item, idx) => {
-                            // Try multiple image sources for each item
                             const itemImage = item.product_image || 
                                              item.product?.image || 
                                              item.image ||

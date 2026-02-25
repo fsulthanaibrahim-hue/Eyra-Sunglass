@@ -11,7 +11,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = [
             'id', 'product', 'product_name', 'product_image',
-            'quantity', 'price', 'tracking_number'   # ✅ created_at removed
+            'quantity', 'price', 'tracking_number'   
         ]
 
     def get_product_image(self, obj):

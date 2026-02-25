@@ -12,7 +12,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class CheckoutSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(source='orderitem_set', many=True, read_only=True)
-    user = serializers.StringRelatedField(read_only=True)  # returns the username
+    user = serializers.StringRelatedField(read_only=True) 
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:

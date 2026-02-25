@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { Link } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -186,14 +185,12 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Scroll effect
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -211,12 +208,10 @@ export default function Navbar() {
       <nav className={`eyra-nav${scrolled ? " scrolled" : ""}`}>
         <div className="eyra-nav-inner">
 
-          {/* ── Logo ── */}
           <Link to="/" className="eyra-logo">
             EY<span>R</span>A
           </Link>
 
-          {/* ── Right Icons ── */}
           <div className="eyra-nav-right">
 
             {user && (
@@ -227,15 +222,12 @@ export default function Navbar() {
 
                 <Link to="/cart" className="eyra-icon-btn" title="Cart" style={{ position: "relative" }}>
                   <ShoppingCart size={18} />
-                  {/* Uncomment and wire up cart count: */}
-                  {/* <span className="eyra-badge">2</span> */}
                 </Link>
 
                 <div className="eyra-icon-divider" />
               </>
             )}
 
-            {/* ── User Dropdown ── */}
             <div ref={dropdownRef} className="eyra-dropdown-wrap">
               <button
                 onClick={() => setOpen(!open)}

@@ -35,7 +35,6 @@ export default function OrderSuccess() {
     return () => { clearInterval(timer); clearTimeout(redirectTimer); };
   }, [orderId, navigate]);
 
-  // ── No order data ──
   if (!orderId) {
     return (
       <div style={{ minHeight: "100vh", background: "#F7F2EC" }}>
@@ -53,7 +52,6 @@ export default function OrderSuccess() {
     );
   }
 
-  // ── Success Page ──
   return (
     <div style={{ minHeight: "100vh", background: "#F7F2EC", fontFamily: "'Jost',sans-serif" }}>
       <style>{`

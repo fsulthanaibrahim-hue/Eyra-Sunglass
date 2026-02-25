@@ -53,7 +53,6 @@ export default function Register() {
       <div className="flex items-center justify-center px-4 pt-24 pb-16 min-h-screen">
         <div className="w-full max-w-sm">
 
-          {/* Header */}
           <div className="text-center mb-8">
             <p className="text-[10px] tracking-[0.25em] uppercase text-[#C9974A] mb-2 font-medium">
               Join Us
@@ -75,7 +74,6 @@ export default function Register() {
           <div className="bg-white border border-[#6B4F3A]/10 rounded-xl p-8 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-5">
 
-              {/* Username */}
               <div>
                 <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
                   Username
@@ -92,7 +90,6 @@ export default function Register() {
                 />
               </div>
 
-              {/* Email */}
               <div>
                 <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
                   Email
@@ -109,7 +106,6 @@ export default function Register() {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label className="block text-[11px] font-medium tracking-widest uppercase text-[#6B4F3A] mb-2">
                   Password
@@ -136,7 +132,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
@@ -154,7 +149,6 @@ export default function Register() {
             </form>
           </div>
 
-          {/* Login Link */}
           <p className="text-center text-xs text-[#9A8070] mt-6">
             Already have an account?{" "}
             <Link

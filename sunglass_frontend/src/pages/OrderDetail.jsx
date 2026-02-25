@@ -1,4 +1,3 @@
-// pages/OrderDetail.jsx (Fully Updated)
 import { useEffect, useState, useContext } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -55,7 +54,6 @@ export default function OrderDetail() {
       
       toast.success('Order cancelled successfully');
       
-      // Background sync
       setTimeout(async () => {
         try {
           await API.post(`/orders/${id}/cancel/`, {}, {
@@ -114,7 +112,6 @@ export default function OrderDetail() {
     }
   };
 
-  // Image URL handling
   const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
     if (imagePath.startsWith('http')) return imagePath;
@@ -279,7 +276,6 @@ export default function OrderDetail() {
 
                   {/* Product Details */}
                   <div className="flex-1 text-center sm:text-left">
-                    {/* ✅ FIXED: Use item.product.id for the link */}
                     <Link to={`/products/${item.product?.id}`} className="hover:underline inline-block">
                       <h3 className="font-['Cormorant_Garamond',serif] text-xl text-[#1C1612] mb-2">
                         {itemName}
@@ -430,7 +426,6 @@ export default function OrderDetail() {
           </button>
         )}
 
-        {/* ✅ FIXED: Cancelled message uses only created_at */}
         {isCancelled && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
             <XCircle size={48} className="text-red-500 mx-auto mb-4" />

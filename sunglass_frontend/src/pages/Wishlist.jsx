@@ -58,7 +58,6 @@ export default function Wishlist() {
     return `http://127.0.0.1:8000${product.image}`;
   };
 
-  // ── Loading ──
   if (loading) {
     return (
       <div style={{ minHeight: "100vh", background: "#F7F2EC" }}>
@@ -72,7 +71,6 @@ export default function Wishlist() {
     );
   }
 
-  // ── Empty State ──
   if (wishlistItems.length === 0) {
     return (
       <div style={{ minHeight: "100vh", background: "#F7F2EC" }}>
@@ -178,7 +176,6 @@ export default function Wishlist() {
           </p>
         </div>
 
-        {/* Grid */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "24px" }}>
           {wishlistItems.map((item) => (
             <div key={item.id} className="wl-card">

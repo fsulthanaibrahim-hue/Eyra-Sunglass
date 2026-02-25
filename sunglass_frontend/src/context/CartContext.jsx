@@ -13,7 +13,6 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
-  // Load cart from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
@@ -25,7 +24,6 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Save to localStorage whenever cart changes
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
     console.log('💾 Cart saved:', cartItems);
@@ -49,7 +47,6 @@ export const CartProvider = ({ children }) => {
     setCartItems(prev => prev.filter(item => item.id !== productId));
   };
 
-  // ✅ NEW: updateQuantity function
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity < 1) {
       removeFromCart(productId);
@@ -79,7 +76,7 @@ export const CartProvider = ({ children }) => {
       cartItems,
       addToCart,
       removeFromCart,
-      updateQuantity,   // ✅ now included
+      updateQuantity,   
       clearCart,
       getCartCount,
       getCartTotal

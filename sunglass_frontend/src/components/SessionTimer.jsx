@@ -1,4 +1,3 @@
-// components/SessionTimer.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
@@ -37,9 +36,7 @@ export default function SessionTimer() {
       const time = calculateTimeLeft();
       setTimeLeft(time);
       
-      // Show warning when 5 minutes left
       if (time && time.minutes <= 5 && time.minutes > 0) {
-        // You can show a toast here
         console.log(`⚠️ Session expires in ${time.minutes} minutes`);
       }
     }, 1000);

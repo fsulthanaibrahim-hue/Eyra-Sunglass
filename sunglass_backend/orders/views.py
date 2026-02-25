@@ -10,7 +10,6 @@ class OrderListCreateAPIView(APIView):
 
     def get(self, request):
         orders = Order.objects.filter(user=request.user).order_by('-created_at')
-        # ✅ Pass request context to serializer for absolute image URLs
         serializer = OrderSerializer(orders, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -57,7 +56,6 @@ class OrderListCreateAPIView(APIView):
         order.total_price = total_price
         order.save()
 
-        # ✅ Pass context here as well (optional but consistent)
         serializer = OrderSerializer(order, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -75,7 +73,6 @@ class OrderDetailAPIView(APIView):
         order = self.get_object(pk, request.user)
         if not order:
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
-        # ✅ Pass context
         serializer = OrderSerializer(order, context={'request': request})
         return Response(serializer.data)
 

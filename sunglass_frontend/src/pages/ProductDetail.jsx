@@ -127,7 +127,6 @@ export default function ProductDetail() {
 
     setBuyingNow(true);
     
-    // ✅ Add to cart first
     addToCart({ 
       id: product.id, 
       name: product.name, 
@@ -136,7 +135,6 @@ export default function ProductDetail() {
       quantity: 1 
     });
     
-    // ✅ Then go directly to checkout
     setTimeout(() => {
       navigate('/checkout');
     }, 300);

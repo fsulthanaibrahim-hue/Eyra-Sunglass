@@ -7,16 +7,12 @@ from django.conf import settings
 from django.templatetags.static import static
 
 
-# Custom permission: only admin can create/update/delete
 class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        # Safe methods are allowed for everyone
         if request.method in permissions.SAFE_METHODS:
             return True
-        # Other methods require admin
         return request.user.is_authenticated and request.user.is_staff
 
-# List all products or create a new product
 class ProductListCreateAPIView(APIView):
     permission_classes = [IsAdminOrReadOnly]
 
@@ -28,11 +24,10 @@ class ProductListCreateAPIView(APIView):
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=request.user)  # set owner as current user
+            serializer.save(owner=request.user)  
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Retrieve, update, or delete a product by ID
 class ProductDetailAPIView(APIView):
     permission_classes = [IsAdminOrReadOnly]
 

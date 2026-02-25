@@ -13,7 +13,6 @@ export default function About() {
     <div className="min-h-screen bg-[#F7F2EC] font-['Jost',sans-serif]">
       <Navbar />
 
-      {/* Same style block as Home page */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
 
@@ -102,7 +101,6 @@ export default function About() {
       <section className="py-24 bg-[#EDE5D8]">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Left Image */}
             <div className="relative group cursor-pointer" onClick={() => navigate("/about")}>
               <div className="absolute -inset-1 bg-gradient-to-r from-[#C9974A] to-[#6B4F3A] rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-700"></div>
               <div className="absolute inset-0 bg-gradient-to-r from-[#C9974A]/20 to-transparent rounded-3xl transform -rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
@@ -113,7 +111,6 @@ export default function About() {
               />
             </div>
 
-            {/* Right Content */}
             <div>
               <p className="section-label">Our Journey</p>
               <h2 className="section-title mb-2">

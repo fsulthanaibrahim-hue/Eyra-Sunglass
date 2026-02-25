@@ -5,10 +5,9 @@ import Navbar from '../components/Navbar';
 import { toast } from 'react-hot-toast';
 
 export default function Cart() {
-  const { cartItems, removeFromCart, updateQuantity } = useCart(); // ✅ cartCount removed – we compute it ourselves
+  const { cartItems, removeFromCart, updateQuantity } = useCart();
   const [total, setTotal] = useState(0);
 
-  // Calculate total whenever cart changes
   useEffect(() => {
     const newTotal = cartItems.reduce((sum, item) =>
       sum + (item.price * (item.quantity || 1)), 0
@@ -16,7 +15,6 @@ export default function Cart() {
     setTotal(newTotal);
   }, [cartItems]);
 
-  // Calculate total number of items (sum of quantities)
   const itemCount = cartItems.reduce((count, item) => count + (item.quantity || 1), 0);
 
   const handleQuantityChange = (itemId, newQuantity) => {
@@ -36,7 +34,6 @@ export default function Cart() {
     return `http://127.0.0.1:8000${image}`;
   };
 
-  // ── Empty State ──
   if (cartItems.length === 0) {
     return (
       <div style={{ minHeight: "100vh", background: "#F7F2EC" }}>
@@ -62,7 +59,6 @@ export default function Cart() {
     );
   }
 
-  // ── Main Cart ──
   return (
     <div style={{ minHeight: "100vh", background: "#F7F2EC", fontFamily: "'Jost',sans-serif" }}>
       <style>{`

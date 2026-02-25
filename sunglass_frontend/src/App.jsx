@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext"; // ✅ Remove useAuth
+import { AuthProvider } from "./context/AuthContext"; 
 import { CartProvider } from "./context/CartContext";
 import { Toaster } from "react-hot-toast";  
 import Navbar from "./components/Navbar";
@@ -21,7 +21,7 @@ export default function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Router> {/* ✅ Indentation fixed */}
+        <Router> 
           <Toaster position="top-right" />
           <Navbar />
           <Routes>
