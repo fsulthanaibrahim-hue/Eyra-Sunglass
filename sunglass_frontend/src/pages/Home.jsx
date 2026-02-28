@@ -633,7 +633,7 @@ export default function Home() {
               </h2>
               <div className="w-12 h-px bg-[#C9974A] mb-6"></div>
               <p className="text-[15px] text-[#6B4F3A] font-light leading-relaxed mb-4">
-                Founded in 2020, EYRA has redefined premium eyewear by combining timeless elegance with modern innovation. Every piece in our collection is meticulously crafted to enhance your vision and elevate your style.
+                Founded in 2025, EYRA has redefined premium eyewear by combining timeless elegance with modern innovation. Every piece in our collection is meticulously crafted to enhance your vision and elevate your style.
               </p>
               <p className="text-[15px] text-[#6B4F3A] font-light leading-relaxed mb-8">
                 From lightweight titanium frames to advanced UV-protected lenses, we ensure that every detail meets our uncompromising standards of quality and comfort.

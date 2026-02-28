@@ -92,7 +92,7 @@ export default function About() {
           </h1>
           <div className="w-20 h-px bg-[#C9974A] mx-auto mb-8"></div>
           <p className="text-lg md:text-xl text-[#F7F2EC]/80 font-light max-w-2xl mx-auto">
-            Crafting premium eyewear with timeless elegance and uncompromising quality since 2020.
+            Crafting premium eyewear with timeless elegance and uncompromising quality since 2025.
           </p>
         </div>
       </section>
@@ -118,7 +118,7 @@ export default function About() {
               </h2>
               <div className="w-12 h-px bg-[#C9974A] mb-6"></div>
               <p className="text-[15px] text-[#6B4F3A] font-light leading-relaxed mb-4">
-                Founded in 2020, EYRA began with a simple vision: to create eyewear that blends classic sophistication with modern innovation. What started as a small atelier in Kerala has grown into a trusted brand for thousands across India.
+                Founded in 2025, EYRA began with a simple vision: to create eyewear that blends classic sophistication with modern innovation. What started as a small atelier in Kerala has grown into a trusted brand for thousands across India.
               </p>
               <p className="text-[15px] text-[#6B4F3A] font-light leading-relaxed mb-4">
                 Every pair of EYRA glasses is meticulously crafted using premium materials – from lightweight titanium to hand-polished acetate – and undergoes rigorous quality checks to ensure lasting comfort and clarity.
