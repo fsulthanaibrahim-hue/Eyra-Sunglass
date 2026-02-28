@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-6rub7hyb*-feb9o7@(sbu9@_bwxa5au5*sat_+*vfd7^8td=b5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['eyra-sunglass.onrender.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
