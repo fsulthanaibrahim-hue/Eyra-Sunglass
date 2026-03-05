@@ -68,7 +68,9 @@ API.interceptors.response.use(
 
       console.log('🔄 Attempting to refresh token...');
       
-      const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
+      // ✅ Use the same base URL as your API
+      const refreshUrl = `${API.defaults.baseURL}token/refresh/`;
+      const response = await axios.post(refreshUrl, {
         refresh: refreshToken
       });
 

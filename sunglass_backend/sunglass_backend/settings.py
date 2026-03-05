@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+from datetime import timedelta
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6rub7hyb*-feb9o7@(sbu9@_bwxa5au5*sat_+*vfd7^8td=b5'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-6rub7hyb*-feb9o7@(sbu9@_bwxa5au5*sat_+*vfd7^8td=b5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com,eyra-sunglass.onrender.com').split(',')
+
+CSRF_TRUSTED_ORIGINS = os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', 'https://eyra-sunglass.onrender.com').split(',')
 
 
 # Application definition
@@ -86,13 +92,14 @@ WSGI_APPLICATION = 'sunglass_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sunglass_db',
-        'USER': 'postgres',
-        'PASSWORD': 'fullstack',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.environ.get('Postgresql', 'sunglass_db'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'fullstack'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
+
 
 
 # Password validation
@@ -130,6 +137,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -142,33 +153,26 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+
 AUTH_USER_MODEL = 'users.User'
 
-import os
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = DEBUG 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:3000",    
+    "http://localhost:3000",
+    "https://your-frontend.onrender.com", 
 ]
 
-from datetime import timedelta
-
-from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=365), 
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),  
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
-    
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
@@ -176,16 +180,13 @@ SIMPLE_JWT = {
     'ISSUER': None,
     'JWK_URL': None,
     'LEEWAY': 0,
-    
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
-    
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
     'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
-    
     'JTI_CLAIM': 'jti',
 }
