@@ -17,6 +17,7 @@ import OrderSuccess from "./pages/OrderSuccess";
 import Orders from "./pages/Orders";
 import About from "./pages/About";
 
+
 export default function App() {
   return (
     <AuthProvider>
@@ -43,4 +44,4 @@ export default function App() {
       </CartProvider>
     </AuthProvider>
   );
-}
+}  

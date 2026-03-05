@@ -6,7 +6,6 @@ from .serializers import ProductSerializer
 from django.conf import settings
 from django.templatetags.static import static
 
-
 class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
@@ -24,6 +23,7 @@ class ProductListCreateAPIView(APIView):
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
+            serializer.save(owner=request.user)  
             serializer.save(owner=request.user)  
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

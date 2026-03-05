@@ -45,7 +45,7 @@ export default function Products() {
     e.stopPropagation();
 
     const newWishlist = new Set(wishlist);
-    
+
     if (newWishlist.has(productId)) {
       newWishlist.delete(productId);
       toast.success("Removed from wishlist");
@@ -75,6 +75,7 @@ export default function Products() {
     return images.length > 0 ? images : [product.image];
   };
 
+    // ── Loading ──
   if (loading) {
     return (
       <div className="min-h-screen" style={{ background: "#F7F2EC" }}>
@@ -151,6 +152,7 @@ export default function Products() {
 
       <Navbar />
 
+      {/* ── Page Header ── */}
       <section className="pt-28 pb-14 px-4 text-center" style={{ background: "#1C1612" }}>
         <p style={{ fontFamily: "'Jost',sans-serif", fontSize: "11px", letterSpacing: "5px", textTransform: "uppercase", color: "#C9974A", fontWeight: 500, marginBottom: "14px" }}>
           EYRA Collection
@@ -174,6 +176,7 @@ export default function Products() {
           </p>
         </div>
 
+        {/* Grid */}
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => {
