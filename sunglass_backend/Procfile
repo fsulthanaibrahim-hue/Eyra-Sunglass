@@ -1,0 +1,1 @@
+web: gunicorn sunglass_backend.wsgi:application
