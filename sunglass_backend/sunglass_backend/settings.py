@@ -88,7 +88,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sunglass_db',
         'USER': 'postgres',
-        'PASSWORD': 'fullstack',
+        'PASSWORD': 'ziasfullstackzsd',
         'HOST': 'localhost',
         'PORT': '5432',
     }
