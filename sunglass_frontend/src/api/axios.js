@@ -8,6 +8,8 @@ const API = axios.create({
   }
 });
 
+console.log("API BASE URL:", import.meta.env.VITE_API_BASE_URL);
+
 let isRefreshing = false;
 let failedQueue = [];
 
