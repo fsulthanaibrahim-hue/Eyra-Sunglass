@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+  pull_request:
+    branches:
+      - main
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -19,11 +23,12 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        working-directory: sunglass_backend
+        working-directory: ./sunglass_backend
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Django tests
-        working-directory: sunglass_backend
+        working-directory: ./sunglass_backend
         run: |
           python manage.py test
