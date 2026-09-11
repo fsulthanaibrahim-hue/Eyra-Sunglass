@@ -17,28 +17,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create enviornment file
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with: 
+          python-version: "3.12"  
+
+      - name: Install dependencies
+        working-directory: ./sunglass_backend
         run: |
-          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-
-      - name: Check Docker Compose
-        run: docker compose version
-
-      - name: Start database
-        run: docker compose up -d db
-
-      - name: Wait for database
-        run: |
-          sleep 10
-
-      - name: Build backend
-        run: docker compose build backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run Django tests
-        run: docker compose run --rm backend python manage.py test
-
-      - name: Stop containers
-        if: always()
-        run: docker compose down
+        working-directory: ./sunglass_backend
+        run: | 
+          python manage.py test
