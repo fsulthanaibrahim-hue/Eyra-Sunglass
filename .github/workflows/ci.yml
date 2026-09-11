@@ -17,18 +17,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+      - name: Set up Docker Compose
+        run: docker compose version
 
-      - name: Install dependencies
-        working-directory: ./sunglass_backend
+      - name: Start database
+        run: docker compose up -d db
+
+      - name: Wait for database
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          sleep 10
+
+      - name: Build backend
+        run: docker compose build backend
 
       - name: Run Django tests
-        working-directory: ./sunglass_backend
-        run: |
-          python manage.py test
+        run: docker compose run --rm backend python manage.py test
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down
