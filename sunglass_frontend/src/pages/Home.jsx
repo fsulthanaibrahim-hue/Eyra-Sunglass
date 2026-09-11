@@ -331,7 +331,7 @@ export default function Home() {
         }
         .section-divider {
           width: 50px;
-          height: 1px;
+          height: 2px;
           background: #C9974A;
           margin: 16px auto 0;
         }
