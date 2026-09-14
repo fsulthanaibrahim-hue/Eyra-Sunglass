@@ -4,12 +4,15 @@ services:
     image: postgres:18
     container_name: sunglass_db
     restart: unless-stopped
+
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
     volumes:
       - postgres_data:/var/lib/postgresql
+
     ports:
       - "5432:5432"
 
@@ -17,37 +20,40 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
-      retries: 5  
+      retries: 5
+
 
   backend:
     build:
       context: ./sunglass_backend
+
     container_name: sunglass_backend
     restart: unless-stopped
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./sunglass_backend:/app
+
     ports:
       - "8000:8000"
+
     env_file:
       - .env
+
     depends_on:
       db:
-       condition: service_healthy
+        condition: service_healthy
+
 
   frontend:
     build:
       context: ./sunglass_frontend
+
     container_name: sunglass_frontend
     restart: unless-stopped
+
     ports:
-      - "5173:5173"
-    volumes:
-      - ./sunglass_frontend:/app
-      - /app/node_modules
+      - "5173:80"
+
     depends_on:
       - backend
 
+
 volumes:
   postgres_data:
-  
